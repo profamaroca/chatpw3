@@ -1,9 +1,5 @@
 import { Request, Response } from "express";
-
-import { getCustomRepository, Repository } from "typeorm";
-import { Setting } from "../entities/Setting";
-
-import { SettingsRepository } from "../repositories/SettingsRepository";
+import { SettingsService } from "../services/SettingsService";
 
 class SettingsController {
 
@@ -14,23 +10,10 @@ class SettingsController {
     // receber o retorno do service
     // e montar a response
 
+    const settingsService = new SettingsService();
+
     try {
-      const settingsRepository = getCustomRepository(SettingsRepository);
-
-      const userAlreadyExists = await settingsRepository.findOne({
-        username
-      });
-
-      if (userAlreadyExists){
-        throw new Error("User already exists!");
-      }
-
-      const settings = settingsRepository.create({
-        chat,
-        username,
-      });
-    
-      await settingsRepository.save(settings);
+      const settings = await settingsService.create({chat, username});
   
       return response.json(settings);
     }catch(err){
